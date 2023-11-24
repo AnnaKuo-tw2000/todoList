@@ -149,5 +149,6 @@
         "rushstack",
         "tailwindcss",
         "unplugin"
-    ]
+    ],
+    "scss.lint.unknownAtRules": "ignore"
 }
