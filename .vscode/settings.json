@@ -143,5 +143,12 @@
     "javascript.inlayHints.variableTypes.suppressWhenTypeMatchesName": false,
     "git.enableSmartCommit": true,
     "window.zoomLevel": 1,
-    "cSpell.words": ["pinia", "rushstack", "tailwindcss", "unplugin"]
+    "cSpell.words": [
+        "fontawesome",
+        "fortawesome",
+        "pinia",
+        "rushstack",
+        "tailwindcss",
+        "unplugin"
+    ]
 }
