@@ -1,0 +1,16 @@
+.el-input {
+    .el-input__wrapper {
+        @apply shadow-none;
+        &:hover {
+            @apply shadow-none;
+        }
+        &.is-focus {
+            @apply shadow-none;
+        }
+    }
+    &.el-input__rounded-full {
+        .el-input__wrapper {
+            @apply rounded-full;
+        }
+    }
+}

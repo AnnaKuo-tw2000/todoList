@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import "elementPlus/el-input.scss";
+@import "elementPlus/el-checkbox.scss";
+
+body {
+    @apply text-secondary;
+}

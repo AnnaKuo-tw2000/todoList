@@ -1,0 +1,29 @@
+label.el-checkbox {
+    -webkit-tap-highlight-color: transparent;
+    height: auto;
+    .el-checkbox__input {
+        .el-checkbox__inner,
+        .el-checkbox__inner:hover {
+            width: 18px;
+            height: 18px;
+            border-radius: 5px;
+            @apply border-primary;
+
+            &::after {
+                border-width: 2.5px;
+                top: 2px;
+                left: 5px;
+            }
+        }
+    }
+    &.is-checked {
+        .el-checkbox__input {
+            .el-checkbox__inner {
+                @apply bg-primary border-primary;
+            }
+        }
+        .el-checkbox__input.is-checked + .el-checkbox__label {
+            @apply text-secondary;
+        }
+    }
+}
