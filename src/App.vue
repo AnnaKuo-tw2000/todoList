@@ -3,10 +3,9 @@ import { RouterView } from 'vue-router';
 
 function initViewHeight() {
     const root = document.documentElement;
-    const windowVhUnit = window.innerHeight / 100;
-    root.style.setProperty('--vh', `${windowVhUnit}px`);
+    root.style.setProperty('--vh', `${window.innerHeight / 100}px`);
     window.addEventListener('resize', () => {
-        root.style.setProperty('--vh', `${windowVhUnit}px`);
+        root.style.setProperty('--vh', `${window.innerHeight / 100}px`);
     });
 }
 
