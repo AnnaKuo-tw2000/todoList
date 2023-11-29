@@ -29,7 +29,9 @@ export default defineConfig({
         // 自動引入元件的設定
         Components({
             resolvers: [
-                ElementPlusResolver(),
+                ElementPlusResolver({
+                    importStyle: "sass",
+                }),
                 IconsResolver({
                     enabledCollections: ["ep"],
                 }),
@@ -44,6 +46,13 @@ export default defineConfig({
     resolve: {
         alias: {
             "@": fileURLToPath(new URL("./src", import.meta.url)),
+        },
+    },
+    css: {
+        preprocessorOptions: {
+            scss: {
+                additionalData: `@use "@/assets/elementPlus/theme.scss" as *;`,
+            },
         },
     },
 });
