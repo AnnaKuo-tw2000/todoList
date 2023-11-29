@@ -15,6 +15,13 @@ module.exports = {
         indent: "off",
         quotes: "off",
         "vue/html-indent": "off",
+        "vuejs-accessibility/click-events-have-key-events": "off",
+        "vue/first-attribute-linebreak": "off",
+        "comma-dangle": "off",
+        camelcase: "off",
+        "import/extensions": ["error", { mjs: "always" }],
+        "vue/max-attributes-per-line": "off",
+        "no-use-before-define": "off",
     },
     settings: {
         ...createAliasSetting({
