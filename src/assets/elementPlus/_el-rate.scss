@@ -1,0 +1,24 @@
+div.el-rate {
+    @apply w-fit h-auto;
+    span.el-rate__item {
+        i.el-rate__icon {
+            @apply scale-110 mr-0 transition-all duration-700;
+            &.is-active {
+                @apply scale-125;
+            }
+        }
+    }
+    --el-rate-void-color: ;
+}
+
+html.dark {
+    div.el-rate {
+        span.el-rate__item {
+            @apply text-dkTxPrimary;
+            i.el-rate__icon {
+                &.is-active {
+                }
+            }
+        }
+    }
+}

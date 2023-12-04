@@ -24,12 +24,14 @@ import {
     faBell as fasBell,
     faArrowLeft,
     faLanguage,
+    faEllipsisVertical,
 } from "@fortawesome/free-solid-svg-icons";
 import {
     faStar,
     faBell as farBell,
     faCalendarCheck,
     faClock,
+    faMoon,
 } from "@fortawesome/free-regular-svg-icons";
 
 library.add(
@@ -42,7 +44,9 @@ library.add(
     faArrowLeft,
     faCalendarCheck,
     faClock,
-    faLanguage
+    faLanguage,
+    faMoon,
+    faEllipsisVertical
 );
 
 const app = createApp(App);
@@ -55,7 +59,7 @@ app.component("font-awesome-icon", FontAwesomeIcon);
 
 // 將dayjs設為全域元件屬性，也就是可以在每個元件中拿到這個物件
 // optionsAPI：this.$dayjs
-// compositionAPI： const { proxy } = getCurrentInstance();  proxy.$dayjs
+// compositionAPI： const { proxy } = getCurrentInstance();  用 proxy.$dayjs 取得
 app.config.globalProperties.$dayjs = dayjs;
 
 app.mount("#app");

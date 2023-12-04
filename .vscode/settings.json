@@ -148,7 +148,8 @@
         "pinia",
         "rushstack",
         "tailwindcss",
-        "unplugin"
+        "unplugin",
+        "vueuse"
     ],
     "scss.lint.unknownAtRules": "ignore"
 }

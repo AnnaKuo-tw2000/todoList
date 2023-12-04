@@ -1,18 +1,22 @@
+@use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @import "elementPlus/el-input.scss";
 @import "elementPlus/el-checkbox.scss";
-
-body {
-    @apply text-secondary;
-}
+@import "elementPlus/el-rate.scss";
+@import "elementPlus/el-switch.scss";
+@import "elementPlus/el-dropdown.scss";
 
 // 解決 elementPlus 互動active時出現藍色底色樣式的問題
 *,
 *::before,
 *::after {
     -webkit-tap-highlight-color: transparent;
-    -webkit-box-shadow: none;
+}
+
+html.dark body {
+    @apply bg-dkPrimary;
 }

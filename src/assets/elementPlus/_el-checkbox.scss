@@ -6,7 +6,7 @@ label.el-checkbox {
             width: 18px;
             height: 18px;
             border-radius: 5px;
-            @apply border-primary;
+            // @apply border-primary;
 
             &::after {
                 border-width: 2.5px;
@@ -18,11 +18,11 @@ label.el-checkbox {
     &.is-checked {
         .el-checkbox__input {
             .el-checkbox__inner {
-                @apply bg-primary border-primary;
+                // @apply bg-primary border-primary;
             }
         }
         .el-checkbox__input.is-checked + .el-checkbox__label {
-            @apply text-secondary;
+            // @apply text-txPrimary;
         }
     }
 }

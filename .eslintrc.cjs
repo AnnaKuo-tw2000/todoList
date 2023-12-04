@@ -22,6 +22,8 @@ module.exports = {
         "import/extensions": ["error", { mjs: "always" }],
         "vue/max-attributes-per-line": "off",
         "no-use-before-define": "off",
+        "vue/max-len": "off",
+        "import/no-extraneous-dependencies": "off",
     },
     settings: {
         ...createAliasSetting({

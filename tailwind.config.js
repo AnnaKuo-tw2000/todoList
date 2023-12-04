@@ -10,10 +10,22 @@ module.exports = {
         },
         extend: {
             colors: {
+                // 樣式
                 primary: "#ffcc00",
-                secondary: "#4a4a4a",
-                tertiary: "#bebebe",
+
+                // 樣式：黑夜模式
+                dkPrimary: "#202124",
+                dkSecondary: "#353535",
+                dkTertiary: "#d19327",
+
+                // 文字
+                txPrimary: "#4a4a4a",
+                txSecondary: "#bebebe",
+
+                // 文字：黑夜模式
+                dkTxPrimary: "#d4d4d4",
             },
         },
     },
+    darkMode: "class",
 };
