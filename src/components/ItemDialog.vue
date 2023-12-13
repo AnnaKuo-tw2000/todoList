@@ -4,7 +4,7 @@ import { useCounterStore } from '../stores/counter';
 
 const store = useCounterStore();
 // 彈窗相關資料
-const props = defineProps(['open_itemDialog']);
+const props = defineProps(['open_itemDialog', 'elementPlusLocale']);
 const emits = defineEmits(['close_itemDialog']);
 const title = ref('');
 const content = ref('');
@@ -32,10 +32,17 @@ watchEffect(async () => {
 // 編輯彈窗
 const saveNoteAndNavigate = () => {
     if (!title.value) {
-        ElMessage({
-            message: '請輸入標題',
-            type: 'warning',
-        });
+        if (store.isTwLocale === true) {
+            ElMessage({
+                message: '請輸入標題',
+                type: 'warning',
+            });
+        } else {
+            ElMessage({
+                message: 'Please enter a title.',
+                type: 'warning',
+            });
+        }
     } else {
         // 如果標題有值，則創建和編輯的事項同一個id的物件，
         const newNote = {
@@ -63,38 +70,43 @@ const saveNoteAndNavigate = () => {
         completionDate.value = '';
         reminderTime.value = '';
         emits('close_itemDialog');
+        store.saveToLocalStorage();
     }
 };
 </script>
 <template>
-    <el-dialog :model-value="props.open_itemDialog" title="新增細項" width="65%" draggable @close="emits('close_itemDialog')">
+    <el-dialog :model-value="props.open_itemDialog" :title="store.isTwLocale === true ? '增加細項' : 'Add task'" width="65%"
+        draggable @close="emits('close_itemDialog')">
         <main>
             <div class="flex items-center">
                 <i-ep-CollectionTag />
-                <el-input v-model="title" placeholder="標題" clearable />
+                <el-input v-model="title" :placeholder="store.isTwLocale === true ? '標題' : 'Title'" clearable />
             </div>
             <div class="flex items-center">
                 <i-ep-Document />
-                <el-input v-model="content" placeholder="詳情" clearable />
+                <el-input v-model="content" :placeholder="store.isTwLocale === true ? '詳情' : 'Content'" clearable />
             </div>
             <div class="flex items-center">
                 <font-awesome-icon :icon="['far', 'calendar-check']" />
-                <el-config-provider :locale="elementPlusLocale">
-                    <el-date-picker v-model="completionDate" type="date" placeholder="預計完成日" prefix-icon="null" />
+                <el-config-provider :locale="props.elementPlusLocale">
+                    <el-date-picker v-model="completionDate" type="date"
+                        :placeholder="store.isTwLocale === true ? '預計完成日' : 'Expected completion date'"
+                        prefix-icon="null" />
                 </el-config-provider>
             </div>
             <div class="flex items-center">
                 <font-awesome-icon :icon="['far', 'clock']" />
-                <el-config-provider :locale="elementPlusLocale">
-                    <el-time-picker v-model="reminderTime" placeholder="提醒時間" prefix-icon="null" />
+                <el-config-provider :locale="props.elementPlusLocale">
+                    <el-time-picker v-model="reminderTime"
+                        :placeholder="store.isTwLocale === true ? '提醒時間' : 'Reminder time'" prefix-icon="null" />
                 </el-config-provider>
             </div>
         </main>
         <template #footer>
             <span class="dialog-footer">
-                <el-button @click="emits('close_itemDialog')">取消</el-button>
+                <el-button @click="emits('close_itemDialog')">{{ store.isTwLocale === true ? '取消' : 'Cancel' }}</el-button>
                 <el-button type="primary" :plain="true" @click="saveNoteAndNavigate">
-                    確認
+                    {{ store.isTwLocale === true ? '確認' : 'Confirm' }}
                 </el-button>
             </span>
         </template>
