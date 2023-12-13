@@ -4,6 +4,7 @@ import zhTw from 'element-plus/dist/locale/zh-tw.mjs';
 import en from 'element-plus/dist/locale/en.mjs';
 import { Sunny, Moon } from '@element-plus/icons-vue';
 import { useDark, useToggle } from '@vueuse/core';
+import { ElMessage } from "element-plus";
 import { useCounterStore } from '../stores/counter';
 
 const store = useCounterStore();
@@ -14,14 +15,15 @@ const isDark = useDark();
 const toggleDark = useToggle(isDark);
 
 // i18n支援
-const isTwLocale = ref(navigator.language === 'zh-TW');
-const dayjsLocale = ref(isTwLocale.value ? 'zh-tw' : 'en');
-const elementPlusLocale = ref(isTwLocale.value ? zhTw : en);
+// const isTwLocale = ref(navigator.language === 'zh-TW');
+const dayjsLocale = ref(store.isTwLocale ? 'zh-tw' : 'en');
+const elementPlusLocale = ref(store.isTwLocale ? zhTw : en);
 function toggleLocale() {
-    isTwLocale.value = !isTwLocale.value;
-    dayjsLocale.value = isTwLocale.value ? 'zh-tw' : 'en';
-    elementPlusLocale.value = isTwLocale.value ? zhTw : en;
+    store.isTwLocale = !store.isTwLocale;
+    dayjsLocale.value = store.isTwLocale ? 'zh-tw' : 'en';
+    elementPlusLocale.value = store.isTwLocale ? zhTw : en;
     initDayjs();
+    console.log(store.isTwLocale);
 }
 
 // dayjs時間呈現
@@ -51,16 +53,32 @@ function closeItemDialog() {
 // todoList相關-增加新事項
 const addTaskInput = ref('');
 function addNewNotes() {
-    const id = Date.now();
-    store.noteList.push({
-        id,
-        title: addTaskInput.value,
-        content: '',
-        completionDate: '',
-        reminderTime: '',
-        isComplete: false,
-        isFavorite: 0,
-    });
+    if (!addTaskInput.value) {
+        if (store.isTwLocale === true) {
+            ElMessage({
+                message: '請輸入標題',
+                type: 'warning',
+            });
+        } else {
+            ElMessage({
+                message: 'Please enter a title.',
+                type: 'warning',
+            });
+        }
+    } else {
+        const id = Date.now();
+        store.noteList.push({
+            id,
+            title: addTaskInput.value,
+            content: '',
+            completionDate: '',
+            reminderTime: '',
+            isComplete: false,
+            isFavorite: 0,
+
+        });
+        store.saveToLocalStorage();
+    }
     addTaskInput.value = '';
 }
 
@@ -75,7 +93,7 @@ const showDot = computed(() => {
 
 </script>
 <template>
-    <header class="todoList__header bg-primary dark:bg-dkPrimary p-4" ref="headerRef">
+    <header class="todoList__header bg-primary dark:bg-dkPrimary p-4">
         <section class="flex justify-between items-center mb-5">
             <div class="flex items-center mr-1">
                 <div class="text-4xl mr-1">{{ curDate }}</div>
@@ -113,7 +131,8 @@ const showDot = computed(() => {
                 </el-dropdown>
             </div>
         </section>
-        <el-input v-model="addTaskInput" placeholder="+ 新增項目" class="el-input__rounded-full" @keydown.enter="addNewNotes">
+        <el-input v-model="addTaskInput" :placeholder="store.isTwLocale === true ? '+ 新增項目' : '+ Add Task'"
+            class="el-input__rounded-full" @keydown.enter="addNewNotes">
             <template #suffix>
                 <div class="h-[28px] w-[28px] bg-primary dark:bg-dkTertiary rounded-full cursor-pointer"
                     @click="open_itemDialog = true">
@@ -122,7 +141,8 @@ const showDot = computed(() => {
             </template>
         </el-input>
     </header>
-    <ItemDialog :open_itemDialog="open_itemDialog" @close_itemDialog="closeItemDialog" />
+    <ItemDialog :open_itemDialog="open_itemDialog" @close_itemDialog="closeItemDialog"
+        :elementPlusLocale="elementPlusLocale" />
 </template>
 <style lang="scss" scoped>
 :deep() {
