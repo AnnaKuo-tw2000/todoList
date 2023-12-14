@@ -2,21 +2,14 @@
 import { useCounterStore } from '../stores/counter';
 
 const store = useCounterStore();
-// main區塊高度計算
-const headerRef = ref(null);
-const footerRef = ref(null);
-const todoListMainStyle = computed(() => {
-    const headerHeight = headerRef.value?.offsetHeight || 0;
-    const footerHeight = footerRef.value?.offsetHeight || 0;
-    return { height: `calc(var(--vh, 1vh) * 100 - ${headerHeight}px - ${footerHeight}px)` };
-});
-
+const { proxy } = getCurrentInstance();
 // 刪除
 function deleteNote(noteId) {
     const index = store.noteList.findIndex((note) => note.id === noteId);
     if (index !== -1) {
         store.noteList.splice(index, 1);
     }
+    store.saveToLocalStorage();
 }
 // 完成
 function confirmFinish(val, noteId) {
@@ -24,32 +17,39 @@ function confirmFinish(val, noteId) {
     if (index !== -1) {
         store.noteList[index].isComplete = val;
     }
-
+    store.saveToLocalStorage();
     console.log(store.noteList);
 }
 // 我的最愛
 function addFavorite(id) {
     const index = store.noteList.findIndex((note) => note.id === id);
-    if (index !== -1) {
+    if (index) {
         const removedItem = store.noteList.splice(index, 1)[0];
         store.noteList.unshift(removedItem);
     }
+    store.saveToLocalStorage();
 }
 
 // 編輯
-
+const selectId = ref('');
 const open_itemDialog = ref(false);
 function editNote(id) {
+    selectId.value = id;
     open_itemDialog.value = true;
-    store.paramsId = id;
     console.log(open_itemDialog.value);
 }
 function closeItemDialog() {
     open_itemDialog.value = false;
 }
+
+//
+function formatCompletionDate(date) {
+    return proxy.$dayjs(date).format('YYYY-MM-DD');
+}
+
 </script>
 <template>
-    <main class="todoList__main px-4 py-5 dark:bg-dkSecondary overflow-auto" :style="todoListMainStyle">
+    <main class="todoList__main px-4 py-5 dark:bg-dkSecondary overflow-auto">
         <div v-for="note in store.filterNoteList" :key="note.id">
             <div class="flex justify-between items-center mb-0.5">
                 <el-checkbox v-model="note.isComplete" :label="note.title" @change="confirmFinish($event, note.id)" />
@@ -63,10 +63,12 @@ function closeItemDialog() {
             </div>
             <div class="ml-6 text-txSecondary text-xs flex mb-2">
                 <i-ep-AlarmClock />
+                <div v-if="note.completionDate">{{ formatCompletionDate(note.completionDate) }}</div>
             </div>
         </div>
-        <el-empty description="來添加提醒項目吧！" v-if="!store.noteList[0]" />
+        <el-empty :description="store.isTwLocale === true ? '來添加提醒項目吧！' : 'Lets add a reminder item!'"
+            v-if="!store.noteList[0]" />
     </main>
-    <ItemDialog :open_itemDialog="open_itemDialog" @close_itemDialog="closeItemDialog" />
+    <ItemDialog :open_itemDialog="open_itemDialog" @close_itemDialog="closeItemDialog" :selectId="selectId" />
 </template>
 <style lang="scss" scoped></style>
