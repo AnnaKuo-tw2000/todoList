@@ -4,30 +4,35 @@ import { useCounterStore } from '../stores/counter';
 
 const store = useCounterStore();
 // 彈窗相關資料
-const props = defineProps(['open_itemDialog', 'elementPlusLocale']);
+const props = defineProps(['open_itemDialog', 'elementPlusLocale', 'selectId']);
 const emits = defineEmits(['close_itemDialog']);
 const title = ref('');
 const content = ref('');
 const completionDate = ref('');
+const reminderDuration = ref('');
 const reminderTime = ref('');
 
 let editingNote = null;
-watchEffect(async () => {
-    if (store.paramsId) {
-        editingNote = store.noteList.find((item) => item.id === store.paramsId);
+watchEffect(() => {
+    if (props.selectId) {
+        editingNote = store.noteList.find((item) => item.id === props.selectId);
         if (editingNote) {
             // 如果是編輯現有筆記，將表單填充為現有筆記的值
             title.value = editingNote.title;
             content.value = editingNote.content;
             completionDate.value = editingNote.completionDate;
+            reminderDuration.value = editingNote.reminderDuration;
             reminderTime.value = editingNote.reminderTime;
             console.log('editingNote', editingNote);
             console.log(title.value);
-            await nextTick();
+
         }
+
         store.paramsId = '';
     }
-});
+})
+
+
 
 // 編輯彈窗
 const saveNoteAndNavigate = () => {
@@ -50,6 +55,7 @@ const saveNoteAndNavigate = () => {
             title: title.value,
             content: content.value,
             completionDate: completionDate.value,
+            reminderDuration: reminderDuration.value,
             reminderTime: reminderTime.value,
             isComplete: false,
             isFavorite: 0,
@@ -64,16 +70,46 @@ const saveNoteAndNavigate = () => {
         } else {
             // 如果是創建新筆記，則將新筆記添加到列表中
             store.noteList.push(newNote);
+            console.log(completionDate.value);
+            console.log(reminderTime.value);
         }
         title.value = '';
         content.value = '';
         completionDate.value = '';
+        reminderDuration.value = '';
         reminderTime.value = '';
         emits('close_itemDialog');
         store.saveToLocalStorage();
     }
 };
+// select選擇器
+
+const options = [
+    {
+        value: '當天',
+        label: store.isTwLocale === true ? '當天' : 'that day',
+    },
+    {
+        value: '一天',
+        label: store.isTwLocale === true ? '一天' : 'one day',
+    },
+    {
+        value: '三天',
+        label: store.isTwLocale === true ? '三天' : 'three days',
+    },
+    {
+        value: '五天',
+        label: store.isTwLocale === true ? '五天' : 'five days',
+    },
+    {
+        value: '七天',
+        label: store.isTwLocale === true ? '一週' : 'a week',
+    },
+];
+// 鬧鐘
+
 </script>
+
 <template>
     <el-dialog :model-value="props.open_itemDialog" :title="store.isTwLocale === true ? '增加細項' : 'Add task'" width="65%"
         draggable @close="emits('close_itemDialog')">
@@ -87,7 +123,7 @@ const saveNoteAndNavigate = () => {
                 <el-input v-model="content" :placeholder="store.isTwLocale === true ? '詳情' : 'Content'" clearable />
             </div>
             <div class="flex items-center">
-                <font-awesome-icon :icon="['far', 'calendar-check']" />
+                <font-awesome-icon :icon="['far', 'calendar-check']" class="p-[1.745px]" />
                 <el-config-provider :locale="props.elementPlusLocale">
                     <el-date-picker v-model="completionDate" type="date"
                         :placeholder="store.isTwLocale === true ? '預計完成日' : 'Expected completion date'"
@@ -95,8 +131,12 @@ const saveNoteAndNavigate = () => {
                 </el-config-provider>
             </div>
             <div class="flex items-center">
-                <font-awesome-icon :icon="['far', 'clock']" />
+                <font-awesome-icon :icon="['far', 'clock']" class="p-[0.86px]" />
                 <el-config-provider :locale="props.elementPlusLocale">
+                    <el-select v-model="reminderDuration" class=""
+                        :placeholder="store.isTwLocale === true ? '提前提醒' : 'Remind in advance'">
+                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+                    </el-select>
                     <el-time-picker v-model="reminderTime"
                         :placeholder="store.isTwLocale === true ? '提醒時間' : 'Reminder time'" prefix-icon="null" />
                 </el-config-provider>
