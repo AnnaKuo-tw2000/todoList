@@ -8,6 +8,7 @@ import { ElMessage } from "element-plus";
 import { useCounterStore } from '../stores/counter';
 
 const store = useCounterStore();
+
 const { proxy } = getCurrentInstance();
 
 // 黑夜模式
@@ -72,6 +73,7 @@ function addNewNotes() {
             title: addTaskInput.value,
             content: '',
             completionDate: '',
+            reminderDuration: '',
             reminderTime: '',
             isComplete: false,
             isFavorite: 0,
