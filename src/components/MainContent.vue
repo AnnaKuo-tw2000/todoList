@@ -1,4 +1,5 @@
 <script setup>
+import { ElMessage } from "element-plus";
 import { useCounterStore } from '../stores/counter';
 
 const store = useCounterStore();
@@ -36,16 +37,59 @@ const open_itemDialog = ref(false);
 function editNote(id) {
     selectId.value = id;
     open_itemDialog.value = true;
-    console.log(open_itemDialog.value);
+    // console.log(open_itemDialog.value);
 }
 function closeItemDialog() {
     open_itemDialog.value = false;
 }
 
-//
+// 格式化預計完成日
 function formatCompletionDate(date) {
     return proxy.$dayjs(date).format('YYYY-MM-DD');
 }
+
+// 鬧鐘
+
+let setTimeoutArr = [];
+watchEffect(() => {
+    // 為了避免重複設置setTimeout，每次都要全部清理之前設置的
+    setTimeoutArr.forEach((item) => {
+        clearTimeout(item);
+    });
+    setTimeoutArr = [];
+
+    const now = new Date();
+    // 過濾陣列，找出有提醒時間，而且尚未提醒，而且尚未完成的項目
+    const targetArr = store.noteList.filter((note) => note.reminderTimestamp && !note.shouldRemind && !note.isComplete);
+    if (targetArr.length > 0) {
+        targetArr.forEach((note) => {
+            // 计算当前时间和完成日的天数差
+            const dayDiff = proxy.$dayjs(note.completionDate).diff(now, 'day');
+            let dayDiffMsg = '';
+            if (dayDiff > 0) {
+                dayDiffMsg = store.isTwLocale === true ? `還有${dayDiff}天就是${note.title}的完成日` : `There are still ${dayDiff} before the completion date of ${note.title}.`;
+            } else if (dayDiff < 0) {
+                dayDiffMsg = store.isTwLocale === true ? `已經超過${note.title}的完成日` : `The completion date of ${note.title} has passed.`;
+            } else {
+                dayDiffMsg = store.isTwLocale === true ? `今天就是${note.title}的完成日` : `Today is the completion date of ${note.title}.`;
+            }
+
+            const timerId = setTimeout(() => {
+                ElMessage({
+                    showClose: true,
+                    message: store.isTwLocale === true ? `${dayDiffMsg}` : `${dayDiffMsg}`,
+                    duration: 0
+                });
+                note.shouldRemind = true;
+                store.saveToLocalStorage();
+                // 清除计时器
+                clearTimeout(timerId);
+            }, note.reminderTimestamp - now);
+
+            setTimeoutArr.push(timerId);
+        });
+    }
+});
 
 </script>
 <template>
@@ -62,13 +106,19 @@ function formatCompletionDate(date) {
                 </div>
             </div>
             <div class="ml-6 text-txSecondary text-xs flex mb-2">
-                <i-ep-AlarmClock />
-                <div v-if="note.completionDate">{{ formatCompletionDate(note.completionDate) }}</div>
+                <i-ep-AlarmClock v-if="note.completionDate" :class="{ active: note.shouldRemind }" />
+                <div v-if="note.completionDate" :class="{ active: note.shouldRemind }">{{
+                    formatCompletionDate(note.completionDate) }}</div>
             </div>
         </div>
         <el-empty :description="store.isTwLocale === true ? '來添加提醒項目吧！' : 'Lets add a reminder item!'"
             v-if="!store.noteList[0]" />
     </main>
-    <ItemDialog :open_itemDialog="open_itemDialog" @close_itemDialog="closeItemDialog" :selectId="selectId" />
+    <ItemDialog v-if="open_itemDialog" :open_itemDialog="open_itemDialog" @close_itemDialog="closeItemDialog"
+        :selectId="selectId" />
 </template>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.active {
+    color: red;
+}
+</style>
