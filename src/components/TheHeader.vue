@@ -77,6 +77,7 @@ function addNewNotes() {
             reminderTime: '',
             isComplete: false,
             isFavorite: 0,
+            shouldRemind: false
 
         });
         store.saveToLocalStorage();
