@@ -2,10 +2,11 @@
 import { ElMessage } from "element-plus";
 import { useCounterStore } from '../stores/counter';
 
+const { proxy } = getCurrentInstance();
 const store = useCounterStore();
 // 彈窗相關資料
 const props = defineProps(['open_itemDialog', 'elementPlusLocale', 'selectId']);
-const emits = defineEmits(['close_itemDialog']);
+const emits = defineEmits(['close_itemDialog', 'shouldRemind']);
 const title = ref('');
 const content = ref('');
 const completionDate = ref('');
@@ -23,16 +24,13 @@ watchEffect(() => {
             completionDate.value = editingNote.completionDate;
             reminderDuration.value = editingNote.reminderDuration;
             reminderTime.value = editingNote.reminderTime;
-            console.log('editingNote', editingNote);
-            console.log(title.value);
-
+            // console.log('editingNote', editingNote);
+            // console.log(title.value);
         }
 
         store.paramsId = '';
     }
-})
-
-
+});
 
 // 編輯彈窗
 const saveNoteAndNavigate = () => {
@@ -59,8 +57,23 @@ const saveNoteAndNavigate = () => {
             reminderTime: reminderTime.value,
             isComplete: false,
             isFavorite: 0,
+            shouldRemind: false,
         };
-
+        // 計算出提醒時間，在新增的時候計算一次
+        if (
+            newNote.completionDate
+            && (newNote.reminderDuration || newNote.reminderDuration === 0)
+            && newNote.reminderTime
+        ) {
+            newNote.reminderTimestamp = proxy.$dayjs(newNote.completionDate)
+                // 減去前幾天的值
+                .subtract(newNote.reminderDuration, 'day')
+                .hour(newNote.reminderTime.getHours())
+                .minute(newNote.reminderTime.getMinutes())
+                .second(newNote.reminderTime.getSeconds())
+                // 將dayjs物件轉為js的Date物件
+                .toDate();
+        }
         if (editingNote) {
             // 如果正在編輯現有筆記，則替換現有筆記
             const index = store.noteList.findIndex((item) => item.id === editingNote.id);
@@ -70,43 +83,54 @@ const saveNoteAndNavigate = () => {
         } else {
             // 如果是創建新筆記，則將新筆記添加到列表中
             store.noteList.push(newNote);
-            console.log(completionDate.value);
-            console.log(reminderTime.value);
+            // console.log(completionDate.value);
+            // console.log(reminderTime.value);
         }
+        // handleReminder();
         title.value = '';
         content.value = '';
         completionDate.value = '';
         reminderDuration.value = '';
         reminderTime.value = '';
-        emits('close_itemDialog');
         store.saveToLocalStorage();
+        emits('close_itemDialog');
     }
 };
 // select選擇器
 
 const options = [
     {
-        value: '當天',
+        value: '0',
         label: store.isTwLocale === true ? '當天' : 'that day',
     },
     {
-        value: '一天',
-        label: store.isTwLocale === true ? '一天' : 'one day',
+        value: '1',
+        label: store.isTwLocale === true ? '前一天' : 'one day',
     },
     {
-        value: '三天',
-        label: store.isTwLocale === true ? '三天' : 'three days',
+        value: '3',
+        label: store.isTwLocale === true ? '前三天' : 'three days',
     },
     {
-        value: '五天',
-        label: store.isTwLocale === true ? '五天' : 'five days',
+        value: '5',
+        label: store.isTwLocale === true ? '前五天' : 'five days',
     },
     {
-        value: '七天',
-        label: store.isTwLocale === true ? '一週' : 'a week',
+        value: '7',
+        label: store.isTwLocale === true ? '前一週' : 'a week',
     },
 ];
-// 鬧鐘
+
+// function setupReminderTimer(timestamp) {
+//     const timeDiff = timestamp - Date.now();
+//     if (timeDiff > 0) {
+//         setTimeout(() => {
+//             // 时间到达，触发提醒操作
+//             emits(shouldRemind, true);
+//         }, timeDiff);
+//         console.log(111);
+//     }
+// }
 
 </script>
 
