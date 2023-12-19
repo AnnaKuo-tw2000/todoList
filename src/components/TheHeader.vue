@@ -87,13 +87,19 @@ function addNewNotes() {
 
 // 隱藏紅點
 const showDot = computed(() => {
-    const hasReminder = store.noteList.findIndex((note) => note.reminderTime !== '');
+    const hasReminder = store.noteList.findIndex((note) => note.shouldRemind === true);
     if (hasReminder !== -1) {
+        // 有需要提醒的就不需要隱藏紅點
         return false;
     }
     return true;
 });
 
+// 小鈴鐺打開需提醒事項彈窗
+const dialogTableVisible = ref(false);
+function close_tableDialog() {
+    dialogTableVisible.value = false;
+}
 </script>
 <template>
     <header class="todoList__header bg-primary dark:bg-dkPrimary p-4">
@@ -119,7 +125,7 @@ const showDot = computed(() => {
                         <el-dropdown-menu class="todoList__ellipsisDropdownMenu">
                             <el-dropdown-item>
                                 <el-badge is-dot class="leading-none" :hidden="showDot"><font-awesome-icon
-                                        :icon="['fas', 'bell']" /></el-badge>
+                                        :icon="['fas', 'bell']" @click="dialogTableVisible = true" /></el-badge>
                             </el-dropdown-item>
                             <el-dropdown-item>
                                 <font-awesome-icon :icon="['fas', 'language']" size="lg" @click="toggleLocale" />
@@ -146,6 +152,7 @@ const showDot = computed(() => {
     </header>
     <ItemDialog :open_itemDialog="open_itemDialog" @close_itemDialog="closeItemDialog"
         :elementPlusLocale="elementPlusLocale" />
+    <TableDialog :dialogTableVisible="dialogTableVisible" @close_tableDialog="close_tableDialog" />
 </template>
 <style lang="scss" scoped>
 :deep() {
