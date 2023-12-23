@@ -1,7 +1,9 @@
 <script setup>
+import { useDark } from '@vueuse/core';
 import { useCounterStore } from '../stores/counter';
 
 const store = useCounterStore();
+const isDark = useDark();
 </script>
 <template>
     <footer class="todoList__footer bg-primary dark:bg-dkPrimary" :class="{ dark: isDark }">
@@ -59,7 +61,9 @@ const store = useCounterStore();
 
                 &.active {
                     @apply text-dkTertiary bg-dkSecondary;
+                    // @apply bg-white;
                 }
+
             }
         }
     }

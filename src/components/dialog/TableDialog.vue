@@ -1,5 +1,5 @@
 <script setup>
-import { useCounterStore } from '../stores/counter';
+import { useCounterStore } from '@/stores/counter';
 
 const store = useCounterStore();
 const { proxy } = getCurrentInstance();
@@ -21,13 +21,12 @@ function formatCompletionDate(date) {
 
 </script>
 <template>
-    <el-dialog :model-value="props.dialogTableVisible" :title="store.isTwLocale === true ? '提醒事項' : 'Reminder items'"
-        @close="emits('close_tableDialog')">
+    <el-dialog :model-value="props.dialogTableVisible" width="60%"
+        :title="store.isTwLocale === true ? '提醒事項' : 'Reminder items'" @close="emits('close_tableDialog')">
         <el-table :data="data">
+            <el-table-column property="title" :label="store.isTwLocale === true ? '標題' : 'Title'" />
             <el-table-column property="completionDate" :label="store.isTwLocale === true ? '完成日' : 'Completion Date'"
-                width="150" />
-            <el-table-column property="title" :label="store.isTwLocale === true ? '標題' : 'Title'" width="200" />
-            <el-table-column property="content" :label="store.isTwLocale === true ? '詳情' : 'content'" />
+                width="130px" />
         </el-table>
     </el-dialog>
 </template>

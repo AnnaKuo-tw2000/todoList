@@ -17,9 +17,9 @@ function confirmFinish(val, noteId) {
     const index = store.noteList.findIndex((note) => note.id === noteId);
     if (index !== -1) {
         store.noteList[index].isComplete = val;
+        store.noteList[index].shouldRemind = false;
     }
     store.saveToLocalStorage();
-    console.log(store.noteList);
 }
 // 我的最愛
 function addFavorite(id) {
@@ -59,7 +59,7 @@ watchEffect(() => {
     setTimeoutArr = [];
 
     const now = new Date();
-    // 過濾陣列，找出有提醒時間，而且尚未提醒，而且尚未完成的項目
+    // 過濾陣列，找出有提醒時間，尚未提醒，且尚未完成的項目
     const targetArr = store.noteList.filter((note) => note.reminderTimestamp && !note.shouldRemind && !note.isComplete);
     if (targetArr.length > 0) {
         targetArr.forEach((note) => {
@@ -91,34 +91,62 @@ watchEffect(() => {
     }
 });
 
+//
+
 </script>
 <template>
-    <main class="todoList__main px-4 py-5 dark:bg-dkSecondary overflow-auto">
-        <div v-for="note in store.filterNoteList" :key="note.id">
+    <main class="todoList__main px-4 py-5  dark:bg-dkSecondary overflow-auto">
+        <div v-for="note in store.filterNoteList" :key="note.id" class="h-[54px]">
             <div class="flex justify-between items-center mb-0.5">
-                <el-checkbox v-model="note.isComplete" :label="note.title" @change="confirmFinish($event, note.id)" />
+                <el-checkbox v-model="note.isComplete" :label="note.title" @change="confirmFinish($event, note.id)"
+                    :style="{ 'text-decoration-line': note.isComplete ? 'line-through' : 'none' }" />
                 <div class="text-txSecondary flex items-center">
-                    <font-awesome-icon :icon="['fas', 'pen-to-square']" class="mx-2 hover:cursor-pointer"
-                        @click="editNote(note.id)" />
-                    <font-awesome-icon :icon="['fas', 'trash-can']" class="mx-2 hover:cursor-pointer"
+                    <font-awesome-icon :icon="['fas', 'pen-to-square']"
+                        class="mx-2 hover:cursor-pointer  hover:text-lime-800" @click="editNote(note.id)" />
+                    <font-awesome-icon :icon="['fas', 'trash-can']" class="mx-2 hover:cursor-pointer hover:text-orange-700"
                         @click="deleteNote(note.id)" />
                     <el-rate v-model="note.isFavorite" :max="1" class="mx-2" clearable @click="addFavorite(note.id)" />
                 </div>
             </div>
-            <div class="ml-6 text-txSecondary text-xs flex mb-2">
-                <i-ep-AlarmClock v-if="note.completionDate" :class="{ active: note.shouldRemind }" />
-                <div v-if="note.completionDate" :class="{ active: note.shouldRemind }">{{
-                    formatCompletionDate(note.completionDate) }}</div>
+            <div class="ml-6 text-txSecondary flex gap-3 text-sm mb-2">
+                <div class="flex mb-.5 shrink-0 items-center">
+                    <i-ep-AlarmClock v-if="note.reminderTimestamp" :class="{ active: note.shouldRemind }" />
+                    <!-- <i-ep-Calendar v-if="note.completionDate && !note.reminderTimestamp"
+                        :class="{ active: new Date(note.completionDate).getTime() < new Date().getTime() && !note.isComplete }" /> -->
+                    <font-awesome-icon :icon="['far', 'calendar-check']"
+                        v-if="note.completionDate && !note.reminderTimestamp" class="relative -top-px"
+                        :class="{ active: new Date(note.completionDate).getTime() < new Date().getTime() && !note.isComplete }" />
+                    <div v-if="note.completionDate"
+                        :class="{ active: new Date(note.completionDate).getTime() < new Date().getTime() && !note.isComplete }">
+                        {{
+                            formatCompletionDate(note.completionDate) }}</div>
+                </div>
+                <div class="flex" v-if="note.content">
+                    <i-ep-Memo />
+                    <el-text class="w-150px" line-clamp="1">{{ note.content }}</el-text>
+                </div>
+
             </div>
         </div>
         <el-empty :description="store.isTwLocale === true ? '來添加提醒項目吧！' : 'Lets add a reminder item!'"
             v-if="!store.noteList[0]" />
+        <el-empty :description="store.isTwLocale === true ? '這裡沒有事項喔！' : 'There is nothing here!'" v-if="store.showEmpty" />
     </main>
-    <ItemDialog v-if="open_itemDialog" :open_itemDialog="open_itemDialog" @close_itemDialog="closeItemDialog"
+    <dialogItemDialog v-if="open_itemDialog" :open_itemDialog="open_itemDialog" @close_itemDialog="closeItemDialog"
         :selectId="selectId" />
 </template>
 <style lang="scss" scoped>
 .active {
     color: red;
+}
+
+:deep() {
+    .el-checkbox__label {
+        @apply text-base;
+    }
+
+    .el-text {
+        @apply text-txSecondary;
+    }
 }
 </style>

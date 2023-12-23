@@ -87,7 +87,7 @@ function addNewNotes() {
 
 // 隱藏紅點
 const showDot = computed(() => {
-    const hasReminder = store.noteList.findIndex((note) => note.reminderTimestamp !== '');
+    const hasReminder = store.noteList.findIndex((note) => note.reminderTimestamp);
     if (hasReminder !== -1) {
         // 有需要提醒的就不需要隱藏紅點
         return false;
@@ -150,9 +150,9 @@ function close_tableDialog() {
             </template>
         </el-input>
     </header>
-    <ItemDialog :open_itemDialog="open_itemDialog" @close_itemDialog="closeItemDialog"
+    <dialogItemDialog :open_itemDialog="open_itemDialog" @close_itemDialog="closeItemDialog"
         :elementPlusLocale="elementPlusLocale" />
-    <TableDialog :dialogTableVisible="dialogTableVisible" @close_tableDialog="close_tableDialog" />
+    <dialogTableDialog :dialogTableVisible="dialogTableVisible" @close_tableDialog="close_tableDialog" />
 </template>
 <style lang="scss" scoped>
 :deep() {

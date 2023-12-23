@@ -18,9 +18,9 @@
     },
     // format：保存時，盡量自動修復下面所列的項目的錯誤
     "editor.codeActionsOnSave": {
-        "source.fixAll": true,
-        "source.fixAll.eslint": true,
-        "source.fixAll.markdownlint": true
+        "source.fixAll": "explicit",
+        "source.fixAll.eslint": "explicit",
+        "source.fixAll.markdownlint": "explicit"
     },
     // 打開VScode時，目錄無工作項目時的行為，none代表不自動做任何事
     "workbench.startupEditor": "none",
@@ -141,7 +141,7 @@
     "javascript.inlayHints.parameterNames.suppressWhenArgumentMatchesName": false,
     "typescript.inlayHints.parameterNames.suppressWhenArgumentMatchesName": false,
     "javascript.inlayHints.variableTypes.suppressWhenTypeMatchesName": false,
-    "window.zoomLevel": 1,
+    "window.zoomLevel": 2,
     "cSpell.words": [
         "fontawesome",
         "fortawesome",

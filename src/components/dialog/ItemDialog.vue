@@ -1,6 +1,6 @@
 <script setup>
 import { ElMessage } from "element-plus";
-import { useCounterStore } from '../stores/counter';
+import { useCounterStore } from '@/stores/counter';
 
 const { proxy } = getCurrentInstance();
 const store = useCounterStore();
@@ -120,18 +120,6 @@ const options = [
         label: store.isTwLocale === true ? '前一週' : 'a week',
     },
 ];
-
-// function setupReminderTimer(timestamp) {
-//     const timeDiff = timestamp - Date.now();
-//     if (timeDiff > 0) {
-//         setTimeout(() => {
-//             // 时间到达，触发提醒操作
-//             emits(shouldRemind, true);
-//         }, timeDiff);
-//         console.log(111);
-//     }
-// }
-
 </script>
 
 <template>
@@ -155,14 +143,15 @@ const options = [
                 </el-config-provider>
             </div>
             <div class="flex items-center">
-                <font-awesome-icon :icon="['far', 'clock']" class="p-[0.86px]" />
+                <i-ep-AlarmClock class="p-[0.86px] shrink-0" />
                 <el-config-provider :locale="props.elementPlusLocale">
                     <el-select v-model="reminderDuration" class=""
-                        :placeholder="store.isTwLocale === true ? '提前提醒' : 'Remind in advance'">
+                        :placeholder="store.isTwLocale === true ? '提前提醒' : 'Remind in advance'" :disabled="!completionDate">
                         <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
                     </el-select>
                     <el-time-picker v-model="reminderTime"
-                        :placeholder="store.isTwLocale === true ? '提醒時間' : 'Reminder time'" prefix-icon="null" />
+                        :placeholder="store.isTwLocale === true ? '提醒時間' : 'Reminder time'" prefix-icon="null"
+                        :disabled="!completionDate" />
                 </el-config-provider>
             </div>
         </main>

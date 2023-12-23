@@ -24,6 +24,9 @@ module.exports = {
         "no-use-before-define": "off",
         "vue/max-len": "off",
         "import/no-extraneous-dependencies": "off",
+        "linebreak-style": "off",
+        "import/prefer-default-export": "off",
+        "no-case-declarations": "off",
     },
     settings: {
         ...createAliasSetting({
