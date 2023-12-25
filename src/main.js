@@ -25,6 +25,7 @@ import {
     faLanguage,
     faEllipsisVertical,
     faHeart,
+    faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
 import {
     faStar,
@@ -48,7 +49,8 @@ library.add(
     faLanguage,
     faMoon,
     faEllipsisVertical,
-    faHeart
+    faHeart,
+    faMagnifyingGlass
 );
 
 const app = createApp(App);

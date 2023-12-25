@@ -11,7 +11,8 @@ module.exports = {
         extend: {
             colors: {
                 // 樣式
-                primary: "#ffcc00",
+                primary: "#f4b508",
+                secondary: "#ffebd4",
 
                 // 樣式：黑夜模式
                 dkPrimary: "#202124",
@@ -21,9 +22,12 @@ module.exports = {
                 // 文字
                 txPrimary: "#4a4a4a",
                 txSecondary: "#bebebe",
+                txTertiary: "#c0c4cc",
 
                 // 文字：黑夜模式
                 dkTxPrimary: "#d4d4d4",
+                dkTxSecondary: "#a4a6ae",
+                dkTxTertiary: "#767779",
             },
         },
     },

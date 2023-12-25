@@ -62,33 +62,38 @@
     "liveSassCompile.settings.generateMap": false,
     // 是否自動產生兼容舊瀏覽器的寫法：協助編譯兼容99%瀏覽器，且向下相容兩個版本
     "liveSassCompile.settings.autoprefix": ["> 1%", "last 2 versions"],
+
+    "editor.semanticTokenColorCustomizations": {
+        "enabled": true,
+        "rules": {
+            // template中，vue處理過邏輯中使用的data變數
+            "property": "#fff9a9",
+            "property.declaration": "#a9dbfa"
+        }
+    },
     "editor.tokenColorCustomizations": {
         // command+shift+P 調出指令，然後輸入Developer: Inspect Editor Tokens and Scopes
         // 此時hover就可以看到各個部分具體的scope
         "textMateRules": [
             {
                 "scope": [
-                    // template裡的v-on的簡寫“@”，v-bind的簡寫“：”
-                    "text.html.vue-html meta.directive.vue punctuation.separator.key-value.html",
+                    // template裡的v-on的簡寫“@” / v-bind的簡寫“：” / scoped template的“#”
+                    "punctuation.attribute-shorthand.event.html.vue",
+                    "punctuation.attribute-shorthand.bind.html.vue",
+                    "punctuation.attribute-shorthand.slot.html.vue",
+                    // template裡的動態屬性的“=”
+                    "punctuation.separator.key-value.html.vue",
                     // template裡的邏輯運算子，如“&&” “||” “!”
-                    "text.html.vue-html meta.directive.vue keyword.operator.logical.js",
+                    "keyword.operator.logical.ts",
+                    "keyword.operator.logical.js",
                     // template裡的條件運算子，如“? .. : ..”
-                    "text.html.vue-html meta.directive.vue keyword.operator.ternary.js",
+                    "punctuation.accessor.optional.js",
+                    "keyword.operator.ternary.js",
                     // template裡的比較運算子，如“==” “===” “>”
-                    "text.html.vue-html meta.directive.vue keyword.operator.comparison.js"
+                    "keyword.operator.comparison.ts"
                 ],
                 "settings": {
                     "foreground": "#f84949",
-                    "fontStyle": "bold"
-                }
-            },
-            {
-                "scope": [
-                    // template裡的方括號
-                    "text.html.vue-html meta.array.literal.js meta.brace.square.js"
-                ],
-                "settings": {
-                    "foreground": "#e8eb3b",
                     "fontStyle": "bold"
                 }
             },
@@ -105,10 +110,10 @@
             {
                 "scope": [
                     // template中，vue處理過的屬性名稱，如 @click=""中的click  :value=""中的value
-                    "text.html.vue-html meta.directive.vue entity.other.attribute-name.html",
+                    "entity.other.attribute-name.html.vue",
                     // template中，vue處理過的屬性的屬性值的左右雙引號，如 @click=""中的""
-                    "text.html.vue-html meta.directive.vue punctuation.definition.string.begin.html",
-                    "text.html.vue-html meta.directive.vue punctuation.definition.string.end.html"
+                    "punctuation.definition.string.begin.html.vue",
+                    "punctuation.definition.string.end.html.vue"
                 ],
                 "settings": {
                     "foreground": "#e29633",
@@ -118,10 +123,29 @@
             {
                 "scope": [
                     // template中，vue處理過邏輯中使用的data變數
-                    "text.html.vue-html meta.directive.vue variable.other.readwrite.js"
+                    "meta.attribute.directive.vue source.ts.embedded.html.vue variable.other.readwrite.ts"
                 ],
                 "settings": {
                     "foreground": "#fff9a9"
+                }
+            },
+            {
+                "scope": [
+                    // Vue 自定義元件
+                    "meta.tag.other.unrecognized.html.derivative entity.name.tag.html"
+                ],
+                "settings": {
+                    "foreground": "#55b87f"
+                }
+            },
+            {
+                "scope": [
+                    // 第三方插件的自定義元件
+                    "meta.tag.custom.start.html entity.name.tag.html",
+                    "meta.tag.custom.end.html entity.name.tag.html"
+                ],
+                "settings": {
+                    "foreground": "#da99ee"
                 }
             }
         ]
@@ -141,7 +165,7 @@
     "javascript.inlayHints.parameterNames.suppressWhenArgumentMatchesName": false,
     "typescript.inlayHints.parameterNames.suppressWhenArgumentMatchesName": false,
     "javascript.inlayHints.variableTypes.suppressWhenTypeMatchesName": false,
-    "window.zoomLevel": 2,
+    "window.zoomLevel": 1,
     "cSpell.words": [
         "fontawesome",
         "fortawesome",
