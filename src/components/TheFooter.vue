@@ -5,8 +5,11 @@ import { useCounterStore } from '../stores/counter';
 const store = useCounterStore();
 const isDark = useDark();
 </script>
+
 <template>
-    <footer class="todoList__footer bg-primary dark:bg-dkPrimary" :class="{ dark: isDark }">
+    <footer
+        class="todoList__footer bg-primary dark:bg-dkPrimary  border-t border-txTertiary dark:border-dkTxSecondary shadow-gray-300 dark:shadow-gray-500"
+        :class="{ dark: isDark }">
         <el-button plain round class="todoList__filterBtn" :class="{ active: store.filterStatus === 'all' }"
             @click="store.filterStatus = 'all'">{{ store.isTwLocale === true ? '全部' : 'All' }}</el-button>
         <el-button plain round class="todoList__filterBtn" :class="{ active: store.filterStatus === 'favorite' }"
@@ -20,16 +23,19 @@ const isDark = useDark();
 
     </footer>
 </template>
+
 <style lang="scss" scoped>
-.todoList__footer {
+.todoList__footer:deep() {
     @apply flex justify-evenly items-start py-4;
     position: relative;
     z-index: 0;
+    box-shadow: 0 -2px 7px -4px;
 
     .todoList__filterBtn {
         &.el-button {
             position: relative;
             border: none;
+            @apply bg-secondary;
 
             &:before {
                 content: '';
@@ -38,33 +44,37 @@ const isDark = useDark();
                 position: absolute;
                 bottom: 50%;
                 z-index: -1;
-                background-color: white;
                 transition: height .3s;
+                box-shadow: 0 -10px var(--tw-shadow-color);
+                @apply bg-secondary shadow-secondary;
             }
 
             &.active {
                 @apply text-primary;
 
                 &::before {
-                    height: 32px;
+                    height: 33px;
                 }
             }
         }
     }
+}
 
-    &.dark {
-        .todoList__filterBtn {
-            &.el-button {
-                &:before {
-                    @apply bg-dkSecondary;
-                }
+.todoList__footer.dark:deep() {
+    box-shadow: 0 -2px 10px -4px;
 
-                &.active {
-                    @apply text-dkTertiary bg-dkSecondary;
-                    // @apply bg-white;
-                }
+    .todoList__filterBtn {
+        &.el-button {
+            @apply bg-transparent;
 
+            &:before {
+                @apply bg-dkSecondary shadow-dkSecondary;
             }
+
+            &.active {
+                @apply text-dkTertiary bg-dkSecondary;
+            }
+
         }
     }
 }

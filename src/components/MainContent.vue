@@ -1,8 +1,10 @@
 <script setup>
 import { ElMessage } from "element-plus";
+import { useDark } from '@vueuse/core';
 import { useCounterStore } from '../stores/counter';
 
 const store = useCounterStore();
+const isDark = useDark();
 const { proxy } = getCurrentInstance();
 // 刪除
 function deleteNote(noteId) {
@@ -49,7 +51,6 @@ function formatCompletionDate(date) {
 }
 
 // 鬧鐘
-
 let setTimeoutArr = [];
 watchEffect(() => {
     // 為了避免重複設置setTimeout，每次都要全部清理之前設置的
@@ -91,12 +92,11 @@ watchEffect(() => {
     }
 });
 
-//
-
 </script>
 <template>
-    <main class="todoList__main px-4 py-5  dark:bg-dkSecondary overflow-auto">
-        <div v-for="note in store.filterNoteList" :key="note.id" class="h-[54px]">
+    <main class="todoList__main px-4 py-7 bg-secondary dark:bg-dkSecondary overflow-auto"
+        :class="{ 'pt-20': store.show_searchInput, dark: isDark, empty: !store.noteList[0] }">
+        <div v-for="note in store.filterNoteList" :key="note.id" class="h-[54px] relative z-10">
             <div class="flex justify-between items-center mb-0.5">
                 <el-checkbox v-model="note.isComplete" :label="note.title" @change="confirmFinish($event, note.id)"
                     :style="{ 'text-decoration-line': note.isComplete ? 'line-through' : 'none' }" />
@@ -138,6 +138,44 @@ watchEffect(() => {
 <style lang="scss" scoped>
 .active {
     color: red;
+}
+
+.todoList__main {
+    transition: padding-top 150ms;
+
+    &.empty {
+        &::before {
+            opacity: 0.06;
+        }
+
+        &.dark {
+            &::before {
+                opacity: 0.02;
+            }
+        }
+    }
+
+    &::before {
+        content: "";
+        background-image: url('@/assets/images/alpacaLight.png');
+        background-size: 300px 300px;
+        background-position: 50% 60%;
+        background-repeat: no-repeat;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        opacity: 0.3;
+    }
+
+    &.dark {
+        &::before {
+            background-image: url('@/assets/images/alpacaDark.png');
+            background-position: 50% 63%;
+            opacity: 0.15;
+        }
+    }
 }
 
 :deep() {
