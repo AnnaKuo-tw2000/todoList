@@ -4,7 +4,7 @@ import { useCounterStore } from '@/stores/counter';
 const store = useCounterStore();
 const { proxy } = getCurrentInstance();
 
-const props = defineProps(['dialogTableVisible']);
+const props = defineProps(['open_tableDialog']);
 const emits = defineEmits(['close_tableDialog']);
 
 // 需呈現在彈窗的提醒事項
@@ -21,12 +21,12 @@ function formatCompletionDate(date) {
 
 </script>
 <template>
-    <el-dialog :model-value="props.dialogTableVisible" width="60%"
+    <el-dialog :model-value="props.open_tableDialog" width="60%"
         :title="store.isTwLocale === true ? '提醒事項' : 'Reminder items'" @close="emits('close_tableDialog')">
-        <el-table :data="data">
+        <el-table :data="data" :empty-text="store.isTwLocale === true ? '沒有要提醒的項目' : 'no alarm item'">
             <el-table-column property="title" :label="store.isTwLocale === true ? '標題' : 'Title'" />
             <el-table-column property="completionDate" :label="store.isTwLocale === true ? '完成日' : 'Completion Date'"
-                width="130px" />
+                width="140px" />
         </el-table>
     </el-dialog>
 </template>

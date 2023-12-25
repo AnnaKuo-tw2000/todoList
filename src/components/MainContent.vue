@@ -41,9 +41,6 @@ function editNote(id) {
     open_itemDialog.value = true;
     // console.log(open_itemDialog.value);
 }
-function closeItemDialog() {
-    open_itemDialog.value = false;
-}
 
 // 格式化預計完成日
 function formatCompletionDate(date) {
@@ -132,7 +129,7 @@ watchEffect(() => {
             v-if="!store.noteList[0]" />
         <el-empty :description="store.isTwLocale === true ? '這裡沒有事項喔！' : 'There is nothing here!'" v-if="store.showEmpty" />
     </main>
-    <dialogItemDialog v-if="open_itemDialog" :open_itemDialog="open_itemDialog" @close_itemDialog="closeItemDialog"
+    <dialogItemDetail v-if="open_itemDialog" :open_itemDialog="open_itemDialog" @close_itemDialog="open_itemDialog = false"
         :selectId="selectId" />
 </template>
 <style lang="scss" scoped>

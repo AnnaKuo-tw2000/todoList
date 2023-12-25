@@ -46,9 +46,6 @@ function initDayjs() {
 
 // 彈窗相關資料
 const open_itemDialog = ref(false);
-function closeItemDialog() {
-    open_itemDialog.value = false;
-}
 
 // todoList相關-增加新事項
 const addTaskInput = ref('');
@@ -97,10 +94,8 @@ const showDot = computed(() => {
 });
 
 // 小鈴鐺打開需提醒事項彈窗
-const dialogTableVisible = ref(false);
-function close_tableDialog() {
-    dialogTableVisible.value = false;
-}
+const open_tableDialog = ref(false);
+
 </script>
 <template>
     <div>
@@ -126,12 +121,12 @@ function close_tableDialog() {
                             </el-badge>
                             <template #dropdown>
                                 <el-dropdown-menu class="todoList__ellipsisDropdownMenu">
-                                    <el-dropdown-item>
+                                    <el-dropdown-item @click="open_tableDialog.value = true">
                                         <el-badge is-dot class="leading-none" :hidden="showDot"><font-awesome-icon
-                                                :icon="['fas', 'bell']" @click="dialogTableVisible = true" /></el-badge>
+                                                :icon="['fas', 'bell']" /></el-badge>
                                     </el-dropdown-item>
-                                    <el-dropdown-item>
-                                        <font-awesome-icon :icon="['fas', 'language']" size="lg" @click="toggleLocale" />
+                                    <el-dropdown-item @click="toggleLocale">
+                                        <font-awesome-icon :icon="['fas', 'language']" size="lg" />
                                     </el-dropdown-item>
                                     <el-dropdown-item>
                                         <el-switch :model-value="isDark" size="small" :active-action-icon="Sunny"
@@ -165,9 +160,9 @@ function close_tableDialog() {
                 </div>
             </div>
         </header>
-        <dialogItemDialog :open_itemDialog="open_itemDialog" @close_itemDialog="closeItemDialog"
+        <dialogItemDetail :open_itemDialog="open_itemDialog" @close_itemDialog="open_itemDialog = false"
             :elementPlusLocale="elementPlusLocale" />
-        <dialogTableDialog :dialogTableVisible="dialogTableVisible" @close_tableDialog="close_tableDialog" />
+        <dialogAlarmTable :open_tableDialog="open_tableDialog" @close_tableDialog="open_tableDialog.value = false" />
     </div>
 </template>
 <style lang="scss" scoped>
