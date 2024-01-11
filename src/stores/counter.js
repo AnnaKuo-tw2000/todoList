@@ -5,7 +5,6 @@ export const useCounterStore = defineStore("counter", () => {
     const noteList = ref([]);
     const filterStatus = ref("all");
     const isTwLocale = ref(navigator.language === "zh-TW");
-    const show_searchInput = ref(false);
 
     // 將 noteList 中的數據轉換為 JSON 字符串並存儲到瀏覽器的本地存儲（localStorage）中.
     const saveToLocalStorage = () => {
