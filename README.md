@@ -43,13 +43,13 @@
 -   [2.3](#2.3) <a name='2.3'></a> **Dayjs**：<br>
     使用 Dayjs 來處理時間和日期的格式，較自己編寫 dateFilter 邏輯來調整日期格式不僅更為方便，且未來要調整或更換其他格式時也更為快捷容易。
 
-    [2.4](#2.4) <a name='2.4'></a> **FontAwesomeIcon**：<br>
+-   [2.4](#2.4) <a name='2.4'></a> **FontAwesomeIcon**：<br>
     透過使用 FontAwesomeIcon，能夠以簡單而一致的方式導入不同風格和尺寸的圖標，使得項目的 UI 設計更加靈活和易於管理，並增添豐富的視覺效果。
 
-    [2.5](#2.5) <a name='2.5'></a> **VueUse**：<br>
+-   [2.5](#2.5) <a name='2.5'></a> **VueUse**：<br>
     使用 vueuse 中的 useDark 和 useToggle 來實現黑夜模式的切換，可方便地處理簡單的開關邏輯。同時也省去了繁瑣的狀態管理操作，提高了代碼的可讀性和維護性。
 
-    [2.6](#2.5) <a name='2.6'></a> **Element Plus**：<br>
+-   [2.6](#2.5) <a name='2.6'></a> **Element Plus**：<br>
     使用 Element Plus 中的 Button、Input、Dialog 等元件，應對不同設計需求按需引入，能夠更快速地構建出符合需求的頁面。
 
 **[⬆ 回到頂端](#table-of-contents)**
