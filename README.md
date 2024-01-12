@@ -56,6 +56,6 @@
     使用 Element Plus 中的 Button、Input、Dialog 等元件，應對不同設計需求按需引入，能夠更快速地構建出符合需求的頁面。
 
 -   [2.7](#2.7) <a name='2.7'></a> **ESLint(airbnb)**：<br>
-    使用 Element Plus 中的 Button、Input、Dialog 等元件，應對不同設計需求按需引入，能夠更快速地構建出符合需求的頁面。
+    為了確保代碼的一致性，這個專案中使用了 ESLint 以及 Airbnb 的 JavaScript 代碼風格指南。他會即時提醒開發者違反風格指南的代碼，提高代碼品質並助於提高代碼的可讀性，減少錯誤和維護代碼庫的複雜性。
 
 **[⬆ 回到頂端](#table-of-contents)**
