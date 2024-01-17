@@ -48,6 +48,10 @@ export default defineConfig({
             "@": fileURLToPath(new URL("./src", import.meta.url)),
         },
     },
+    base: "/todoList/", // 設置 repository 名稱
+    build: {
+        outDir: "docs",
+    },
     css: {
         preprocessorOptions: {
             scss: {
