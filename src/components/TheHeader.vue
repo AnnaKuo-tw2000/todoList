@@ -152,11 +152,13 @@ const open_tableDialog = ref(false);
             <div class="absolute top-full left-0 w-full border-b border-txTertiary dark:border-dkTxSecondary px-8 pb-4 bg-primary dark:bg-dkPrimary flex items-center transition-all leading-none shadow-md shadow-gray-300 dark:shadow-gray-500"
                 :class="{ '-translate-y-[98%]': !store.show_searchInput, 'rounded-b-xl': store.show_searchInput }">
                 <div class="text-sm shrink-0">關鍵字：</div>
-                <el-input v-model="searchTxt" placeholder="請輸入" class="todoList__searchInput" :class="{ dark: isDark }"
-                    clearable />
+                <el-input v-model="noteStateStore.searchTxt" placeholder="請輸入" class="todoList__searchInput"
+                    :class="{ dark: isDark }" clearable />
                 <div class="absolute -bottom-5 right-[18px] border border-t-0 bg-primary dark:bg-dkPrimary border-txTertiary dark:border-dkTxSecondary rounded-b-xl h-5 w-7 cursor-pointer text-center shadow-md shadow-gray-300 dark:shadow-gray-500"
-                    @click="store.show_searchInput = !store.show_searchInput">
+                    @click="noteStateStore.show_searchInput = !noteStateStore.show_searchInput">
+                    <el-badge :is-dot="!!noteStateStore.searchTxt">
                     <font-awesome-icon :icon="['fas', 'magnifying-glass']" size="xs" />
+                    </el-badge>
                 </div>
             </div>
         </header>
