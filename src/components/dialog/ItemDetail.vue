@@ -26,8 +26,6 @@ watchEffect(() => {
             completionDate.value = editingNote.completionDate;
             reminderDuration.value = editingNote.reminderDuration;
             reminderTime.value = editingNote.reminderTime;
-            // console.log('editingNote', editingNote);
-            // console.log(title.value);
         }
     }
 });
@@ -83,8 +81,6 @@ const saveNoteAndNavigate = () => {
         } else {
             // 如果是創建新筆記，則將新筆記添加到列表中
             noteStateStore.noteList.push(newNote);
-            // console.log(completionDate.value);
-            // console.log(reminderTime.value);
         }
         // handleReminder();
         title.value = '';

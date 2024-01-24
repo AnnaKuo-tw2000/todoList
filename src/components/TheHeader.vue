@@ -24,7 +24,6 @@ function toggleLocale() {
     dayjsLocale.value = languageStore.isTwLocale ? 'zh-tw' : 'en';
     elementPlusLocale.value = languageStore.isTwLocale ? zhTw : en;
     initDayjs();
-    console.log(languageStore.isTwLocale);
 }
 
 // dayjs時間呈現

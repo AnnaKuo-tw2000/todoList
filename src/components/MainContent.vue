@@ -41,7 +41,6 @@ const open_itemDialog = ref(false);
 function editNote(id) {
     selectId.value = id;
     open_itemDialog.value = true;
-    // console.log(open_itemDialog.value);
 }
 
 // 格式化預計完成日
