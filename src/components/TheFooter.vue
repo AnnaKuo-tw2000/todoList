@@ -1,8 +1,10 @@
 <script setup>
 import { useDark } from '@vueuse/core';
-import { useCounterStore } from '../stores/counter';
+import { useNoteStateStore } from '../stores/noteState';
+import { useLanguageStore } from '../stores/language';
 
-const store = useCounterStore();
+const noteStateStore = useNoteStateStore();
+const languageStore = useLanguageStore();
 const isDark = useDark();
 </script>
 
@@ -10,16 +12,18 @@ const isDark = useDark();
     <footer
         class="todoList__footer bg-primary dark:bg-dkPrimary  border-t border-txTertiary dark:border-dkTxSecondary shadow-gray-300 dark:shadow-gray-500"
         :class="{ dark: isDark }">
-        <el-button plain round class="todoList__filterBtn" :class="{ active: store.filterStatus === 'all' }"
-            @click="store.filterStatus = 'all'">{{ store.isTwLocale === true ? '全部' : 'All' }}</el-button>
-        <el-button plain round class="todoList__filterBtn" :class="{ active: store.filterStatus === 'favorite' }"
-            @click="store.filterStatus = 'favorite'">
+        <el-button plain round class="todoList__filterBtn" :class="{ active: noteStateStore.filterStatus === 'all' }"
+            @click="noteStateStore.filterStatus = 'all'">{{ languageStore.isTwLocale === true ? '全部' : 'All' }}</el-button>
+        <el-button plain round class="todoList__filterBtn" :class="{ active: noteStateStore.filterStatus === 'favorite' }"
+            @click="noteStateStore.filterStatus = 'favorite'">
             <font-awesome-icon :icon="['fas', 'fa-heart']" style="color:#f5619c" />
         </el-button>
-        <el-button plain round class="todoList__filterBtn" :class="{ active: store.filterStatus === 'completed' }"
-            @click="store.filterStatus = 'completed'">{{ store.isTwLocale === true ? '已完成' : 'Completed' }}</el-button>
-        <el-button plain round class="todoList__filterBtn" :class="{ active: store.filterStatus === 'incomplete' }"
-            @click="store.filterStatus = 'incomplete'">{{ store.isTwLocale === true ? '未完成' : 'Incomplete' }}</el-button>
+        <el-button plain round class="todoList__filterBtn" :class="{ active: noteStateStore.filterStatus === 'completed' }"
+            @click="noteStateStore.filterStatus = 'completed'">{{ languageStore.isTwLocale === true ? '已完成' : 'Completed'
+            }}</el-button>
+        <el-button plain round class="todoList__filterBtn" :class="{ active: noteStateStore.filterStatus === 'incomplete' }"
+            @click="noteStateStore.filterStatus = 'incomplete'">{{ languageStore.isTwLocale === true ? '未完成' : 'Incomplete'
+            }}</el-button>
 
     </footer>
 </template>

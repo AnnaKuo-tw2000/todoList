@@ -1,36 +1,38 @@
 <script setup>
 import { ElMessage } from "element-plus";
 import { useDark } from '@vueuse/core';
-import { useCounterStore } from '../stores/counter';
+import { useNoteStateStore } from '../stores/noteState';
+import { useLanguageStore } from '../stores/language';
 
-const store = useCounterStore();
+const noteStateStore = useNoteStateStore();
+const languageStore = useLanguageStore();
 const isDark = useDark();
 const { proxy } = getCurrentInstance();
 // 刪除
 function deleteNote(noteId) {
-    const index = store.noteList.findIndex((note) => note.id === noteId);
+    const index = noteStateStore.noteList.findIndex((note) => note.id === noteId);
     if (index !== -1) {
-        store.noteList.splice(index, 1);
+        noteStateStore.noteList.splice(index, 1);
     }
-    store.saveToLocalStorage();
+    noteStateStore.saveToLocalStorage();
 }
 // 完成
 function confirmFinish(val, noteId) {
-    const index = store.noteList.findIndex((note) => note.id === noteId);
+    const index = noteStateStore.noteList.findIndex((note) => note.id === noteId);
     if (index !== -1) {
-        store.noteList[index].isComplete = val;
-        store.noteList[index].shouldRemind = false;
+        noteStateStore.noteList[index].isComplete = val;
+        noteStateStore.noteList[index].shouldRemind = false;
     }
-    store.saveToLocalStorage();
+    noteStateStore.saveToLocalStorage();
 }
 // 我的最愛
 function addFavorite(id) {
-    const index = store.noteList.findIndex((note) => note.id === id);
+    const index = noteStateStore.noteList.findIndex((note) => note.id === id);
     if (index) {
-        const removedItem = store.noteList.splice(index, 1)[0];
-        store.noteList.unshift(removedItem);
+        const removedItem = noteStateStore.noteList.splice(index, 1)[0];
+        noteStateStore.noteList.unshift(removedItem);
     }
-    store.saveToLocalStorage();
+    noteStateStore.saveToLocalStorage();
 }
 
 // 編輯
@@ -39,10 +41,6 @@ const open_itemDialog = ref(false);
 function editNote(id) {
     selectId.value = id;
     open_itemDialog.value = true;
-    // console.log(open_itemDialog.value);
-}
-function closeItemDialog() {
-    open_itemDialog.value = false;
 }
 
 // 格式化預計完成日
@@ -61,28 +59,28 @@ watchEffect(() => {
 
     const now = new Date();
     // 過濾陣列，找出有提醒時間，尚未提醒，且尚未完成的項目
-    const targetArr = store.noteList.filter((note) => note.reminderTimestamp && !note.shouldRemind && !note.isComplete);
+    const targetArr = noteStateStore.noteList.filter((note) => note.reminderTimestamp && !note.shouldRemind && !note.isComplete);
     if (targetArr.length > 0) {
         targetArr.forEach((note) => {
             // 计算当前时间和完成日的天数差
             const dayDiff = proxy.$dayjs(note.completionDate).diff(now, 'day');
             let dayDiffMsg = '';
             if (dayDiff > 0) {
-                dayDiffMsg = store.isTwLocale === true ? `還有${dayDiff}天就是${note.title}的完成日` : `There are still ${dayDiff} before the completion date of ${note.title}.`;
+                dayDiffMsg = languageStore.isTwLocale === true ? `還有${dayDiff}天就是${note.title}的完成日` : `There are still ${dayDiff} before the completion date of ${note.title}.`;
             } else if (dayDiff < 0) {
-                dayDiffMsg = store.isTwLocale === true ? `已經超過${note.title}的完成日` : `The completion date of ${note.title} has passed.`;
+                dayDiffMsg = languageStore.isTwLocale === true ? `已經超過${note.title}的完成日` : `The completion date of ${note.title} has passed.`;
             } else {
-                dayDiffMsg = store.isTwLocale === true ? `今天就是${note.title}的完成日` : `Today is the completion date of ${note.title}.`;
+                dayDiffMsg = languageStore.isTwLocale === true ? `今天就是${note.title}的完成日` : `Today is the completion date of ${note.title}.`;
             }
 
             const timerId = setTimeout(() => {
                 ElMessage({
                     showClose: true,
-                    message: store.isTwLocale === true ? `${dayDiffMsg}` : `${dayDiffMsg}`,
+                    message: languageStore.isTwLocale === true ? `${dayDiffMsg}` : `${dayDiffMsg}`,
                     duration: 0
                 });
                 note.shouldRemind = true;
-                store.saveToLocalStorage();
+                noteStateStore.saveToLocalStorage();
                 // 清除计时器
                 clearTimeout(timerId);
             }, note.reminderTimestamp - now);
@@ -95,8 +93,8 @@ watchEffect(() => {
 </script>
 <template>
     <main class="todoList__main px-4 py-7 bg-secondary dark:bg-dkSecondary overflow-auto"
-        :class="{ 'pt-20': store.show_searchInput, dark: isDark, empty: !store.noteList[0] }">
-        <div v-for="note in store.filterNoteList" :key="note.id" class="h-[54px] relative z-10">
+        :class="{ 'pt-20': noteStateStore.show_searchInput, dark: isDark, empty: !noteStateStore.noteList[0] }">
+        <div v-for="note in noteStateStore.filterNoteList" :key="note.id" class="h-[54px] relative z-10">
             <div class="flex justify-between items-center mb-0.5">
                 <el-checkbox v-model="note.isComplete" :label="note.title" @change="confirmFinish($event, note.id)"
                     :style="{ 'text-decoration-line': note.isComplete ? 'line-through' : 'none' }" />
@@ -128,11 +126,12 @@ watchEffect(() => {
 
             </div>
         </div>
-        <el-empty :description="store.isTwLocale === true ? '來添加提醒項目吧！' : 'Lets add a reminder item!'"
-            v-if="!store.noteList[0]" />
-        <el-empty :description="store.isTwLocale === true ? '這裡沒有事項喔！' : 'There is nothing here!'" v-if="store.showEmpty" />
+        <el-empty :description="languageStore.isTwLocale === true ? '來添加提醒項目吧！' : 'Lets add a reminder item!'"
+            v-if="!noteStateStore.noteList[0]" />
+        <el-empty :description="languageStore.isTwLocale === true ? '這裡沒有事項喔！' : 'There is nothing here!'"
+            v-if="noteStateStore.showEmpty" />
     </main>
-    <dialogItemDialog v-if="open_itemDialog" :open_itemDialog="open_itemDialog" @close_itemDialog="closeItemDialog"
+    <dialogItemDetail v-if="open_itemDialog" :open_itemDialog="open_itemDialog" @close_itemDialog="open_itemDialog = false"
         :selectId="selectId" />
 </template>
 <style lang="scss" scoped>

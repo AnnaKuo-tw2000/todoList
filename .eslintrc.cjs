@@ -28,6 +28,8 @@ module.exports = {
         "import/prefer-default-export": "off",
         "no-case-declarations": "off",
         "implicit-arrow-linebreak": "off",
+        "no-confusing-arrow": "off",
+        "operator-linebreak": "off",
     },
     settings: {
         ...createAliasSetting({

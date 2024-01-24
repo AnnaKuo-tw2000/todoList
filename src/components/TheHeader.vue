@@ -5,9 +5,11 @@ import en from 'element-plus/dist/locale/en.mjs';
 import { Sunny, Moon } from '@element-plus/icons-vue';
 import { useDark, useToggle } from '@vueuse/core';
 import { ElMessage } from "element-plus";
-import { useCounterStore } from '../stores/counter';
+import { useNoteStateStore } from '../stores/noteState';
+import { useLanguageStore } from '../stores/language';
 
-const store = useCounterStore();
+const noteStateStore = useNoteStateStore();
+const languageStore = useLanguageStore();
 const { proxy } = getCurrentInstance();
 
 // 黑夜模式
@@ -15,15 +17,13 @@ const isDark = useDark();
 const toggleDark = useToggle(isDark);
 
 // i18n支援
-// const isTwLocale = ref(navigator.language === 'zh-TW');
-const dayjsLocale = ref(store.isTwLocale ? 'zh-tw' : 'en');
-const elementPlusLocale = ref(store.isTwLocale ? zhTw : en);
+const dayjsLocale = ref(languageStore.isTwLocale ? 'zh-tw' : 'en');
+const elementPlusLocale = ref(languageStore.isTwLocale ? zhTw : en);
 function toggleLocale() {
-    store.isTwLocale = !store.isTwLocale;
-    dayjsLocale.value = store.isTwLocale ? 'zh-tw' : 'en';
-    elementPlusLocale.value = store.isTwLocale ? zhTw : en;
+    languageStore.isTwLocale = !languageStore.isTwLocale;
+    dayjsLocale.value = languageStore.isTwLocale ? 'zh-tw' : 'en';
+    elementPlusLocale.value = languageStore.isTwLocale ? zhTw : en;
     initDayjs();
-    console.log(store.isTwLocale);
 }
 
 // dayjs時間呈現
@@ -46,17 +46,13 @@ function initDayjs() {
 
 // 彈窗相關資料
 const open_itemDialog = ref(false);
-function closeItemDialog() {
-    open_itemDialog.value = false;
-}
 
 // todoList相關-增加新事項
 const addTaskInput = ref('');
-const searchTxt = ref('');
 
 function addNewNotes() {
     if (!addTaskInput.value) {
-        if (store.isTwLocale === true) {
+        if (languageStore.isTwLocale === true) {
             ElMessage({
                 message: '請輸入標題',
                 type: 'warning',
@@ -69,7 +65,7 @@ function addNewNotes() {
         }
     } else {
         const id = Date.now();
-        store.noteList.push({
+        noteStateStore.noteList.push({
             id,
             title: addTaskInput.value,
             content: '',
@@ -81,14 +77,14 @@ function addNewNotes() {
             shouldRemind: false
 
         });
-        store.saveToLocalStorage();
+        noteStateStore.saveToLocalStorage();
     }
     addTaskInput.value = '';
 }
 
 // 隱藏紅點
 const showDot = computed(() => {
-    const hasReminder = store.noteList.findIndex((note) => note.reminderTimestamp);
+    const hasReminder = noteStateStore.noteList.findIndex((note) => note.reminderTimestamp);
     if (hasReminder !== -1) {
         // 有需要提醒的就不需要隱藏紅點
         return false;
@@ -97,10 +93,8 @@ const showDot = computed(() => {
 });
 
 // 小鈴鐺打開需提醒事項彈窗
-const dialogTableVisible = ref(false);
-function close_tableDialog() {
-    dialogTableVisible.value = false;
-}
+const open_tableDialog = ref(false);
+
 </script>
 <template>
     <div>
@@ -126,12 +120,12 @@ function close_tableDialog() {
                             </el-badge>
                             <template #dropdown>
                                 <el-dropdown-menu class="todoList__ellipsisDropdownMenu">
-                                    <el-dropdown-item>
+                                    <el-dropdown-item @click="open_tableDialog.value = true">
                                         <el-badge is-dot class="leading-none" :hidden="showDot"><font-awesome-icon
-                                                :icon="['fas', 'bell']" @click="dialogTableVisible = true" /></el-badge>
+                                                :icon="['fas', 'bell']" /></el-badge>
                                     </el-dropdown-item>
-                                    <el-dropdown-item>
-                                        <font-awesome-icon :icon="['fas', 'language']" size="lg" @click="toggleLocale" />
+                                    <el-dropdown-item @click="toggleLocale">
+                                        <font-awesome-icon :icon="['fas', 'language']" size="lg" />
                                     </el-dropdown-item>
                                     <el-dropdown-item>
                                         <el-switch :model-value="isDark" size="small" :active-action-icon="Sunny"
@@ -143,7 +137,7 @@ function close_tableDialog() {
                         </el-dropdown>
                     </div>
                 </div>
-                <el-input v-model="addTaskInput" :placeholder="store.isTwLocale === true ? '+ 新增項目' : '+ Add Task'"
+                <el-input v-model="addTaskInput" :placeholder="languageStore.isTwLocale === true ? '+ 新增項目' : '+ Add Task'"
                     class="todoList__addInput el-input__rounded-full" @keydown.enter="addNewNotes">
                     <template #suffix>
                         <el-button type="primary" round class="relative" @click="open_itemDialog = true">
@@ -155,19 +149,21 @@ function close_tableDialog() {
                 </el-input>
             </section>
             <div class="absolute top-full left-0 w-full border-b border-txTertiary dark:border-dkTxSecondary px-8 pb-4 bg-primary dark:bg-dkPrimary flex items-center transition-all leading-none shadow-md shadow-gray-300 dark:shadow-gray-500"
-                :class="{ '-translate-y-[98%]': !store.show_searchInput, 'rounded-b-xl': store.show_searchInput }">
+                :class="{ '-translate-y-[98%]': !noteStateStore.show_searchInput, 'rounded-b-xl': noteStateStore.show_searchInput }">
                 <div class="text-sm shrink-0">關鍵字：</div>
-                <el-input v-model="searchTxt" placeholder="請輸入" class="todoList__searchInput" :class="{ dark: isDark }"
-                    clearable />
+                <el-input v-model="noteStateStore.searchTxt" placeholder="請輸入" class="todoList__searchInput"
+                    :class="{ dark: isDark }" clearable />
                 <div class="absolute -bottom-5 right-[18px] border border-t-0 bg-primary dark:bg-dkPrimary border-txTertiary dark:border-dkTxSecondary rounded-b-xl h-5 w-7 cursor-pointer text-center shadow-md shadow-gray-300 dark:shadow-gray-500"
-                    @click="store.show_searchInput = !store.show_searchInput">
-                    <font-awesome-icon :icon="['fas', 'magnifying-glass']" size="xs" />
+                    @click="noteStateStore.show_searchInput = !noteStateStore.show_searchInput">
+                    <el-badge :is-dot="!!noteStateStore.searchTxt">
+                        <font-awesome-icon :icon="['fas', 'magnifying-glass']" size="xs" />
+                    </el-badge>
                 </div>
             </div>
         </header>
-        <dialogItemDialog :open_itemDialog="open_itemDialog" @close_itemDialog="closeItemDialog"
+        <dialogItemDetail :open_itemDialog="open_itemDialog" @close_itemDialog="open_itemDialog = false"
             :elementPlusLocale="elementPlusLocale" />
-        <dialogTableDialog :dialogTableVisible="dialogTableVisible" @close_tableDialog="close_tableDialog" />
+        <dialogAlarmTable :open_tableDialog="open_tableDialog" @close_tableDialog="open_tableDialog.value = false" />
     </div>
 </template>
 <style lang="scss" scoped>
