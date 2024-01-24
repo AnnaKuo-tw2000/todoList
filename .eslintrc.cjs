@@ -27,6 +27,7 @@ module.exports = {
         "linebreak-style": "off",
         "import/prefer-default-export": "off",
         "no-case-declarations": "off",
+        "implicit-arrow-linebreak": "off",
     },
     settings: {
         ...createAliasSetting({
