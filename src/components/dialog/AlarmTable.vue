@@ -1,14 +1,16 @@
 <script setup>
-import { useCounterStore } from '@/stores/counter';
+import { useNoteStateStore } from '@/stores/noteState';
+import { useLanguageStore } from '@/stores/language';
 
-const store = useCounterStore();
+const noteStateStore = useNoteStateStore();
+const languageStore = useLanguageStore();
 const { proxy } = getCurrentInstance();
 
 const props = defineProps(['open_tableDialog']);
 const emits = defineEmits(['close_tableDialog']);
 
 // 需呈現在彈窗的提醒事項
-const data = computed(() => store.noteList.filter((note) => note.reminderTimestamp && !note.isComplete)
+const data = computed(() => noteStateStore.noteList.filter((note) => note.reminderTimestamp && !note.isComplete)
     .map((note) => ({
         ...note,
         completionDate: formatCompletionDate(note.completionDate)
@@ -22,11 +24,11 @@ function formatCompletionDate(date) {
 </script>
 <template>
     <el-dialog :model-value="props.open_tableDialog" width="60%"
-        :title="store.isTwLocale === true ? '提醒事項' : 'Reminder items'" @close="emits('close_tableDialog')">
-        <el-table :data="data" :empty-text="store.isTwLocale === true ? '沒有要提醒的項目' : 'no alarm item'">
-            <el-table-column property="title" :label="store.isTwLocale === true ? '標題' : 'Title'" />
-            <el-table-column property="completionDate" :label="store.isTwLocale === true ? '完成日' : 'Completion Date'"
-                width="140px" />
+        :title="languageStore.isTwLocale === true ? '提醒事項' : 'Reminder items'" @close="emits('close_tableDialog')">
+        <el-table :data="data" :empty-text="languageStore.isTwLocale === true ? '沒有要提醒的項目' : 'no alarm item'">
+            <el-table-column property="title" :label="languageStore.isTwLocale === true ? '標題' : 'Title'" />
+            <el-table-column property="completionDate"
+                :label="languageStore.isTwLocale === true ? '完成日' : 'Completion Date'" width="140px" />
         </el-table>
     </el-dialog>
 </template>

@@ -34,7 +34,7 @@ import {
     faClock,
     faMoon,
 } from "@fortawesome/free-regular-svg-icons";
-import { useCounterStore } from "./stores/counter";
+import { useNoteStateStore } from "./stores/noteState";
 
 library.add(
     faPlus,
@@ -58,11 +58,11 @@ const app = createApp(App);
 app.use(createPinia());
 app.use(router);
 
-// 創建或獲取 useCounterStore 實例
-const store = useCounterStore();
+// 創建或獲取 useNoteStateStore 實例
+const store = useNoteStateStore();
 // 檢查本地存儲中是否存在已保存的 noteList
 const savedNoteList = localStorage.getItem("noteList");
-// 如果存在，將其解析成物件並設置為 useCounterStore 中的 noteList
+// 如果存在，將其解析成物件並設置為 useNoteStateStore 中的 noteList
 if (savedNoteList) {
     store.noteList = JSON.parse(savedNoteList);
 }

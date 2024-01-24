@@ -1,9 +1,11 @@
 <script setup>
 import { ElMessage } from "element-plus";
-import { useCounterStore } from '@/stores/counter';
+import { useNoteStateStore } from '@/stores/noteState';
+import { useLanguageStore } from '@/stores/language';
 
+const noteStateStore = useNoteStateStore();
+const languageStore = useLanguageStore();
 const { proxy } = getCurrentInstance();
-const store = useCounterStore();
 // 彈窗相關資料
 const props = defineProps(['open_itemDialog', 'elementPlusLocale', 'selectId']);
 const emits = defineEmits(['close_itemDialog', 'shouldRemind']);
@@ -16,7 +18,7 @@ const reminderTime = ref('');
 let editingNote = null;
 watchEffect(() => {
     if (props.selectId) {
-        editingNote = store.noteList.find((item) => item.id === props.selectId);
+        editingNote = noteStateStore.noteList.find((item) => item.id === props.selectId);
         if (editingNote) {
             // 如果是編輯現有筆記，將表單填充為現有筆記的值
             title.value = editingNote.title;
@@ -27,15 +29,13 @@ watchEffect(() => {
             // console.log('editingNote', editingNote);
             // console.log(title.value);
         }
-
-        store.paramsId = '';
     }
 });
 
 // 編輯彈窗
 const saveNoteAndNavigate = () => {
     if (!title.value) {
-        if (store.isTwLocale === true) {
+        if (languageStore.isTwLocale === true) {
             ElMessage({
                 message: '請輸入標題',
                 type: 'warning',
@@ -76,13 +76,13 @@ const saveNoteAndNavigate = () => {
         }
         if (editingNote) {
             // 如果正在編輯現有筆記，則替換現有筆記
-            const index = store.noteList.findIndex((item) => item.id === editingNote.id);
+            const index = noteStateStore.noteList.findIndex((item) => item.id === editingNote.id);
             if (index !== -1) {
-                store.noteList.splice(index, 1, newNote);
+                noteStateStore.noteList.splice(index, 1, newNote);
             }
         } else {
             // 如果是創建新筆記，則將新筆記添加到列表中
-            store.noteList.push(newNote);
+            noteStateStore.noteList.push(newNote);
             // console.log(completionDate.value);
             // console.log(reminderTime.value);
         }
@@ -92,7 +92,7 @@ const saveNoteAndNavigate = () => {
         completionDate.value = '';
         reminderDuration.value = '';
         reminderTime.value = '';
-        store.saveToLocalStorage();
+        noteStateStore.saveToLocalStorage();
         emits('close_itemDialog');
     }
 };
@@ -101,44 +101,44 @@ const saveNoteAndNavigate = () => {
 const options = [
     {
         value: '0',
-        label: store.isTwLocale === true ? '當天' : 'that day',
+        label: languageStore.isTwLocale === true ? '當天' : 'that day',
     },
     {
         value: '1',
-        label: store.isTwLocale === true ? '前一天' : 'one day',
+        label: languageStore.isTwLocale === true ? '前一天' : 'one day',
     },
     {
         value: '3',
-        label: store.isTwLocale === true ? '前三天' : 'three days',
+        label: languageStore.isTwLocale === true ? '前三天' : 'three days',
     },
     {
         value: '5',
-        label: store.isTwLocale === true ? '前五天' : 'five days',
+        label: languageStore.isTwLocale === true ? '前五天' : 'five days',
     },
     {
         value: '7',
-        label: store.isTwLocale === true ? '前一週' : 'a week',
+        label: languageStore.isTwLocale === true ? '前一週' : 'a week',
     },
 ];
 </script>
 
 <template>
-    <el-dialog :model-value="props.open_itemDialog" :title="store.isTwLocale === true ? '增加細項' : 'Add task'" width="65%"
-        draggable @close="emits('close_itemDialog')">
+    <el-dialog :model-value="props.open_itemDialog" :title="languageStore.isTwLocale === true ? '增加細項' : 'Add task'"
+        width="65%" draggable @close="emits('close_itemDialog')">
         <main>
             <div class="flex items-center">
                 <i-ep-CollectionTag />
-                <el-input v-model="title" :placeholder="store.isTwLocale === true ? '標題' : 'Title'" clearable />
+                <el-input v-model="title" :placeholder="languageStore.isTwLocale === true ? '標題' : 'Title'" clearable />
             </div>
             <div class="flex items-center">
                 <i-ep-Document />
-                <el-input v-model="content" :placeholder="store.isTwLocale === true ? '詳情' : 'Content'" clearable />
+                <el-input v-model="content" :placeholder="languageStore.isTwLocale === true ? '詳情' : 'Content'" clearable />
             </div>
             <div class="flex items-center">
                 <font-awesome-icon :icon="['far', 'calendar-check']" class="p-[1.745px]" />
                 <el-config-provider :locale="props.elementPlusLocale">
                     <el-date-picker v-model="completionDate" type="date"
-                        :placeholder="store.isTwLocale === true ? '預計完成日' : 'Expected completion date'"
+                        :placeholder="languageStore.isTwLocale === true ? '預計完成日' : 'Expected completion date'"
                         prefix-icon="null" />
                 </el-config-provider>
             </div>
@@ -146,20 +146,22 @@ const options = [
                 <i-ep-AlarmClock class="p-[0.86px] shrink-0" />
                 <el-config-provider :locale="props.elementPlusLocale">
                     <el-select v-model="reminderDuration" class=""
-                        :placeholder="store.isTwLocale === true ? '提前提醒' : 'Remind in advance'" :disabled="!completionDate">
+                        :placeholder="languageStore.isTwLocale === true ? '提前提醒' : 'Remind in advance'"
+                        :disabled="!completionDate">
                         <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
                     </el-select>
                     <el-time-picker v-model="reminderTime"
-                        :placeholder="store.isTwLocale === true ? '提醒時間' : 'Reminder time'" prefix-icon="null"
+                        :placeholder="languageStore.isTwLocale === true ? '提醒時間' : 'Reminder time'" prefix-icon="null"
                         :disabled="!completionDate" />
                 </el-config-provider>
             </div>
         </main>
         <template #footer>
             <span class="dialog-footer">
-                <el-button @click="emits('close_itemDialog')">{{ store.isTwLocale === true ? '取消' : 'Cancel' }}</el-button>
+                <el-button @click="emits('close_itemDialog')">{{ languageStore.isTwLocale === true ? '取消' : 'Cancel'
+                }}</el-button>
                 <el-button type="primary" :plain="true" @click="saveNoteAndNavigate">
-                    {{ store.isTwLocale === true ? '確認' : 'Confirm' }}
+                    {{ languageStore.isTwLocale === true ? '確認' : 'Confirm' }}
                 </el-button>
             </span>
         </template>
