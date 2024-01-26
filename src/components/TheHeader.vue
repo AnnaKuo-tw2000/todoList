@@ -94,7 +94,6 @@ const showDot = computed(() => {
 
 // 小鈴鐺打開需提醒事項彈窗
 const open_tableDialog = ref(false);
-
 </script>
 <template>
     <div>
@@ -120,7 +119,7 @@ const open_tableDialog = ref(false);
                             </el-badge>
                             <template #dropdown>
                                 <el-dropdown-menu class="todoList__ellipsisDropdownMenu">
-                                    <el-dropdown-item @click="open_tableDialog.value = true">
+                                    <el-dropdown-item @click="open_tableDialog = true">
                                         <el-badge is-dot class="leading-none" :hidden="showDot"><font-awesome-icon
                                                 :icon="['fas', 'bell']" /></el-badge>
                                     </el-dropdown-item>
@@ -163,7 +162,7 @@ const open_tableDialog = ref(false);
         </header>
         <dialogItemDetail :open_itemDialog="open_itemDialog" @close_itemDialog="open_itemDialog = false"
             :elementPlusLocale="elementPlusLocale" />
-        <dialogAlarmTable :open_tableDialog="open_tableDialog" @close_tableDialog="open_tableDialog.value = false" />
+        <dialogAlarmTable :open_tableDialog="open_tableDialog" @close_tableDialog="open_tableDialog = false" />
     </div>
 </template>
 <style lang="scss" scoped>
