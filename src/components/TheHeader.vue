@@ -84,7 +84,7 @@ function addNewNotes() {
 
 // 隱藏紅點
 const showDot = computed(() => {
-    const hasReminder = noteStateStore.noteList.findIndex((note) => note.reminderTimestamp);
+    const hasReminder = noteStateStore.noteList.findIndex((note) => note.reminderTimestamp && !note.isComplete);
     if (hasReminder !== -1) {
         // 有需要提醒的就不需要隱藏紅點
         return false;
